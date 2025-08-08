@@ -1,0 +1,15 @@
+<section>
+  <h2>Exercise 1: JS Concurrency</h2>
+  <p>Put urls in this textarea to fetch it. Maximum numbers of concurrency will be {{maxConcurrency}}</p>
+  <form #form="ngForm" (ngSubmit)="onSubmit()">
+    <textarea name="urls" [(ngModel)]="urls" required></textarea>
+    <button type="submit">Fetch</button>
+  </form>
+  @if (resultUrls$ | async; as results) {
+    <div>
+      @for (result of results; track $index) {
+        <p>{{result}}</p>
+      }
+    </div>
+  }
+</section>
