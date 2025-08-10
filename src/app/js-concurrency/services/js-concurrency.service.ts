@@ -1,23 +1,27 @@
-import { Injectable } from "@angular/core";
-import { Mutex } from "async-mutex";
+import { Injectable } from '@angular/core';
+import { Mutex } from 'async-mutex';
 import { catchError, from, mergeMap, Observable, of, toArray } from 'rxjs';
-import { Url2Fetch } from "../types";
+import { Url2Fetch } from '../types';
 
 @Injectable()
 export class JSConcurrencyService {
-
-  public fetchUsingRxjs(urls: string[], maxConcurrency = 5): Observable<string[]> {
+  public fetchUsingRxjs(
+    urls: string[],
+    maxConcurrency = 5
+  ): Observable<string[]> {
     return from(urls.map((url, index) => ({ url, index }))).pipe(
       mergeMap(
-      ({ url, index }) =>
-        from(fetch(url)).pipe(
-          mergeMap(response => of({ index, status: response.status.toString() })),
-          catchError(err => of({ index, status: `Error: ${err}` }))
-        ),
+        ({ url, index }) =>
+          from(fetch(url)).pipe(
+            mergeMap((response) =>
+              of({ index, status: response.status.toString() })
+            ),
+            catchError((err) => of({ index, status: `Error: ${err}` }))
+          ),
         maxConcurrency
       ),
       toArray(),
-      mergeMap(results => {
+      mergeMap((results) => {
         const finalResults: string[] = [];
         results.forEach(({ index, status }) => {
           finalResults[index] = status;
@@ -43,27 +47,24 @@ export class JSConcurrencyService {
       let hasItems = true;
       while (hasItems) {
         const item = await getNextItem();
-        if (item === null) {
+        if (item !== null) {
+          const { url, index } = item;
+          try {
+            const result = await fetch(url);
+            resultsUrls[index] = result.status.toString();
+          } catch (err) {
+            console.error(`Error on ${url}`, err);
+            resultsUrls[index] = `Error: ${err}`;
+          }
+        } else {
           hasItems = false;
-          break;
-        }
-
-        const { url, index } = item as Url2Fetch;
-        try {
-          const result = await fetch(url);
-          resultsUrls[index] = result.status.toString();
-        } catch (err) {
-          console.error(`Error on ${url}`, err);
-          resultsUrls[index] = `Error: ${err}`;
         }
       }
     };
 
-    const workers = Array.from({ length: maxConcurrency },
-      () => worker());
+    const workers = Array.from({ length: maxConcurrency }, () => worker());
     await Promise.all(workers);
 
     return resultsUrls;
   }
-
 }
