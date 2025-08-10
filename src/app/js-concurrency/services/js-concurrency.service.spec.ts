@@ -1,5 +1,5 @@
 import { TestBed } from "@angular/core/testing";
-import { JSConcurrencyService } from "./js-concurrency,service";
+import { JSConcurrencyService } from "./js-concurrency.service";
 import { firstValueFrom } from "rxjs";
 
 /**

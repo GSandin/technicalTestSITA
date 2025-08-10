@@ -3,7 +3,8 @@
 This project is created to complete the technical test for SITA.
 Each exercise is implemented as separate services and used on specific page. The available exercise page are:
 
-- `/exercise-one`: : JS Concurrency
+- `/exercise-one`: JS Concurrency
+- `/exercise-two`: The License Plate Problem
 
 ## Development server
 

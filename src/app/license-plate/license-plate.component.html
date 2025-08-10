@@ -1,0 +1,11 @@
+<section>
+  <h2>Exercise 2: The License Plate Problem</h2>
+  <p>Type nth license</p>
+  <form #form="ngForm" (ngSubmit)="onSubmit()">
+    <input name="numLicense" type="number" [(ngModel)]="numLicense" required/>
+    <button type="submit">Give me license</button>
+  </form>
+  @if (license) {
+    <div>Your license is: {{license}}</div>
+  }
+</section>
